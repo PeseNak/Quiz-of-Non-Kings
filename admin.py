@@ -37,7 +37,7 @@ class Review:
         )
         self.author_lbl.place(relx=0.5, anchor="center", y=250)
         self.answer_lbl = ttk.Label(
-            self.root, wraplength=400, font=("Arial", 14), justify="center", foreground="lime"
+            self.root, wraplength=400, font=("Arial", 14), justify="center", foreground="green"
         )
         self.answer_lbl.place(relx=0.5, anchor="center", y=285)
 

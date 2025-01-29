@@ -197,7 +197,7 @@ class Game:
         self.question = qData[self.subject][self.question_index]["question"]
         self.options = qData[self.subject][self.question_index]["options"]
         self.author = qData[self.subject][self.question_index]["author"]
-        self.question_lbl.config(text=self.question)
+        self.question_lbl.config(text=self.question, wraplength=400)
         self.opt1 = ttk.Button(
             self.options_frame, text=self.options[0], command=lambda: self.check_answer(self.options[0]))
         self.opt1.place(relx=0, rely=0)
@@ -451,6 +451,7 @@ root.title("QoNK")
 
 root.geometry("410x400+550+250")
 game = Login_Signin(root)
+root.resizable(False, False)
 root.mainloop()
 qFile.close()
 uFile.close()
