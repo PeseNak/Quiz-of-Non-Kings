@@ -1,1 +1,10 @@
-{ "mmd": { "password": "123", "AllTimeScore": 0 } }
+{
+  "mmd": {
+    "password": "123",
+    "AllTimeScore": 3
+  },
+  "akbar": {
+    "password": "akbar",
+    "AllTimeScore": 2
+  }
+}

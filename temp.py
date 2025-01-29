@@ -1,5 +1,6 @@
 import tkinter
 from tkinter import ttk, messagebox
+import customtkinter as ctk
 import json
 import random
 import pygame
@@ -7,155 +8,10 @@ import pygame
 pygame.mixer.init()
 
 qFile = open("data/questions.json", "r", encoding="utf-8")
-qData = json.load(qFile)
+qFile = json.load(qFile)
 
 uFile = open("data/users.json", "r", encoding="utf-8")
-uData = json.load(uFile)
-
-
-class Login_Signin:
-    def __init__(self, root):
-        self.root = root
-
-        # -------- widgets of login windows --------
-
-        self.QoNK_lbl = ttk.Label(
-            self.root, text="Quiz Of NoN Kings!", foreground="gray", font=("Chiller", 35))
-        self.QoNK_lbl.place(relx=0.5, y=65, anchor="center")
-        self.username_lbl = ttk.Label(
-            self.root, text="username:", font=("Arial", 9))
-        self.username_lbl.place(relx=0.5, x=-93, y=105,
-                                anchor="center")
-        self.username_entry = ttk.Entry(
-            self.root, font=("Arial", 11), justify="center")
-        self.username_entry.place(relx=0.5, y=130, anchor="center", width=250)
-        self.password_label = ttk.Label(
-            self.root, text="password:", font=("Arial", 9))
-        self.password_label.place(relx=0.5, x=-93, y=175, anchor="center")
-        self.password_entry = ttk.Entry(
-            self.root, show="*", font=("Arial", 11), justify="center")
-        self.password_entry.place(relx=0.5, y=200, anchor="center", width=250)
-        self.signin_btn = ttk.Button(
-            self.root, text="Sign in", command=self.signin)
-        self.signin_btn.place(relx=0.5, y=270, anchor="center")
-        self.signup_btn = ttk.Button(
-            self.root, text="Sign up", command=self.signup)
-        self.signup_btn.place(relx=0.5, y=330, anchor="center")
-        self.error_lbl = ttk.Label(self.root, font=("Arial", 10))
-        self.error_lbl.place(relx=0.5, y=370, anchor="center")
-
-    #  -------- check the entries for Log in --------
-
-    def signin(self):
-        if self.username_entry.get() in uData:
-            if self.password_entry.get() == uData[self.username_entry.get()]["password"]:
-                def login():
-                    user = self.username_entry.get()
-                    for widget in self.root.winfo_children():
-                        widget.destroy()
-                    MainMenu(self.root, user)
-                self.error_lbl.config(
-                    text="loged in", foreground="green")
-                self.root.after(1000, login)
-
-            else:
-                self.error_lbl.config(
-                    text="The password is incorrect", foreground="red")
-        else:
-            self.error_lbl.config(
-                text="No such user exists", foreground="red")
-
-    # -------- check the entries for sign up --------
-
-    def signup(self):
-        if self.username_entry.get() in uData:
-            self.error_lbl.config(
-                text="This username is already taken", foreground="red")
-        else:
-
-            uData.update({self.username_entry.get(): {
-                "password": self.password_entry.get(), "AllTimeScore": 0}})
-            temp2 = open("data/users.json", "w", encoding="utf-8")
-            json.dump(uData, temp2, ensure_ascii=False, indent=4)
-            temp2.close()
-            self.error_lbl.config(
-                text="Account created, log in", foreground="green")
-
-
-class MainMenu:
-    def __init__(self, root, user):
-        self.root = root
-        self.user = user
-        self.userAllScore = uData[self.user]["AllTimeScore"]
-        self.QoNK_lbl = ttk.Label(
-            self.root, text="Quiz Of NoN Kings!", foreground="gray", font=("Chiller", 35))
-        self.QoNK_lbl.place(relx=0.5, y=65, anchor="center")
-        style.configure("Start.TButton", font=(
-            "Arial", 18), foreground="gray")
-        self.user_lbl = ttk.Label(self.root, text=self.user)
-        self.user_lbl.place(relx=0.5, x=-150, y=10, anchor="center")
-        self.userAllScore_lbl = ttk.Label(self.root, text=self.userAllScore)
-        self.userAllScore_lbl.place(relx=0.5, x=160, y=10, anchor="center")
-        self.start_button = ttk.Button(
-            self.root, text="Start", style="Start.TButton", command=self.start_func)
-        self.start_button.place(
-            relx=0.5, y=200, anchor="center", width=120, height=70)
-        self.suggest_question_btn = ttk.Button(
-            self.root, text="Suggest a question", command=self.suggest_func)
-        self.suggest_question_btn.place(
-            relx=0.5, x=80, y=350, anchor="center")
-        self.Logout_btn = ttk.Button(
-            self.root, text="Log Out", command=self.logout_func)
-        self.Logout_btn.place(relx=0.5, x=-100, y=350, anchor="center")
-
-    def start_func(self):
-        for widget in self.root.winfo_children():
-            widget.destroy()
-        Subject(self.root, self.user)
-
-    def suggest_func(self):
-        for widget in self.root.winfo_children():
-            widget.destroy()
-        Suggesting(self.root, self.user)
-
-    def logout_func(self):
-        for widget in self.root.winfo_children():
-            widget.destroy()
-        Login_Signin(self.root)
-
-
-class Subject:
-    def __init__(self, root, user):
-        self.root = root
-        self.user = user
-
-        categories = [
-            ("programming", 80, -80),
-            ("sport", 80, 80),
-            ("mathematic", 160, -80),
-            ("general", 160, 80),
-            ("geography", 240, -80),
-            ("history", 240, 80)
-        ]
-        for text, y, x in categories:
-            btn = ttk.Button(
-                self.root,
-                text=text,
-                command=lambda t=text: self.button_pressed(t))
-            btn.place(relx=0.5, x=x, y=y, anchor="center")
-        self.cancel_btn = ttk.Button(
-            self.root, text="cancel", command=self.cancel_func)
-        self.cancel_btn.place(relx=0.5, y=340, anchor="center")
-
-    def button_pressed(self, subject):
-        for widget in self.root.winfo_children():
-            widget.destroy()
-        Game(self.root, subject, self.user)
-
-    def cancel_func(self):
-        for widget in self.root.winfo_children():
-            widget.destroy()
-        MainMenu(self.root, self.user)
+uFile = json.load(uFile)
 
 
 class Game:
@@ -167,7 +23,7 @@ class Game:
         self.isRunning = True
         self.subject = subject
         self.user = user
-        random.shuffle(qData[self.subject])
+        random.shuffle(qFile[self.subject])
         self.stage_frame = ttk.Frame(self.root, border=5, relief="solid")
         self.stage_frame.place(relx=0.5, x=190, y=10,
                                anchor="ne", width=75, height=30)
@@ -194,9 +50,9 @@ class Game:
         for widget in self.options_frame.winfo_children():
             widget.destroy()
 
-        self.question = qData[self.subject][self.question_index]["question"]
-        self.options = qData[self.subject][self.question_index]["options"]
-        self.author = qData[self.subject][self.question_index]["author"]
+        self.question = qFile[self.subject][self.question_index]["question"]
+        self.options = qFile[self.subject][self.question_index]["options"]
+        self.author = qFile[self.subject][self.question_index]["author"]
         self.question_lbl.config(text=self.question)
         self.opt1 = ttk.Button(
             self.options_frame, text=self.options[0], command=lambda: self.check_answer(self.options[0]))
@@ -237,13 +93,13 @@ class Game:
             for i in [self.opt1, self.opt2, self.opt3, self.opt4]:
                 i.config(command=self.idk)
 
-                if i.cget("text") == qData[self.subject][self.question_index]["answer"]:
+                if i.cget("text") == qFile[self.subject][self.question_index]["answer"]:
                     i.config(style="Correct.TButton")
                 else:
                     i.config(style="Wrong.TButton")
 
     def check_answer(self, user_option):
-        if user_option == qData[self.subject][self.question_index]["answer"]:
+        if user_option == qFile[self.subject][self.question_index]["answer"]:
             self.stage_lbl = ttk.Label(
                 self.stage_frame, text="   ", background="green")
             self.stage_lbl.place(x=self.question_index*17, y=0)
@@ -268,7 +124,7 @@ class Game:
         for i in [self.opt1, self.opt2, self.opt3, self.opt4]:
             i.config(command=self.idk)
 
-            if i.cget("text") == qData[self.subject][self.question_index]["answer"]:
+            if i.cget("text") == qFile[self.subject][self.question_index]["answer"]:
                 i.config(style="Correct.TButton")
             else:
                 i.config(style="Wrong.TButton")
@@ -330,23 +186,52 @@ class Result:
             self.question_index += 1
 
         self.question1.config(command=lambda: messagebox.showinfo(
-            "Question 1", qData[self.subject][0]["question"] + "\nReal Answer: "+qData[self.subject][0]["answer"]+"\nYour Answer: " + self.user_choices[0]["choice"]))
+            "Question 1", qFile[self.subject][0]["question"] + "\nReal Answer: "+qFile[self.subject][0]["answer"]+"\nYour Answer: " + self.user_choices[0]["choice"]))
         self.question2.config(command=lambda: messagebox.showinfo(
-            "Question 2", qData[self.subject][1]["question"] + "\nReal Answer: "+qData[self.subject][1]["answer"]+"\nYour Answer: " + self.user_choices[1]["choice"]))
+            "Question 2", qFile[self.subject][1]["question"] + "\nReal Answer: "+qFile[self.subject][1]["answer"]+"\nYour Answer: " + self.user_choices[1]["choice"]))
         self.question3.config(command=lambda: messagebox.showinfo(
-            "Question 3", qData[self.subject][2]["question"] + "\nReal Answer: "+qData[self.subject][2]["answer"]+"\nYour Answer: " + self.user_choices[2]["choice"]))
+            "Question 3", qFile[self.subject][2]["question"] + "\nReal Answer: "+qFile[self.subject][2]["answer"]+"\nYour Answer: " + self.user_choices[2]["choice"]))
         self.question4.config(command=lambda: messagebox.showinfo(
-            "Question 4", qData[self.subject][3]["question"] + "\nReal Answer: "+qData[self.subject][3]["answer"]+"\nYour Answer: " + self.user_choices[3]["choice"]))
+            "Question 4", qFile[self.subject][3]["question"] + "\nReal Answer: "+qFile[self.subject][3]["answer"]+"\nYour Answer: " + self.user_choices[3]["choice"]))
 
-        uData[user]["AllTimeScore"] = uData[user]["AllTimeScore"] + \
+        uFile[user]["AllTimeScore"] = uFile[user]["AllTimeScore"] + \
             int(self.user_score)
         temp1 = open("data/users.json", "w", encoding="utf-8")
-        json.dump(uData, temp1, ensure_ascii=False, indent=4)
+        json.dump(uFile, temp1, ensure_ascii=False, indent=4)
 
     def next_button_func(self):
         for widget in self.root.winfo_children():
             widget.destroy()
         MainMenu(self.root, self.user)
+
+
+class MainMenu:
+    def __init__(self, root, user):
+        self.root = root
+        self.user = user
+        self.userScore = uFile[self.user]["AllTimeScore"]
+        self.QoNK_lbl = ttk.Label(
+            self.root, text="Quiz Of NoN Kings!", foreground="gray", font=("Chiller", 35))
+        self.QoNK_lbl.place(relx=0.5, y=50, anchor="center")
+        style.configure("Start.TButton", font=(
+            "Arial", 18), foreground="gray")
+        self.start_button = ttk.Button(
+            self.root, text="Start", style="Start.TButton", command=self.start_func)
+        self.start_button.place(
+            relx=0.5, y=200, anchor="center", width=120, height=70)
+        self.suggest_question_btn = ttk.Button(
+            self.root, text="Suggest a question", command=self.suggest_func)
+        self.suggest_question_btn.place(relx=0.5, y=350, anchor="center")
+
+    def start_func(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        Subject(self.root, self.user)
+
+    def suggest_func(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        Suggesting(self.root, self.user)
 
 
 class Suggesting:
@@ -380,35 +265,23 @@ class Suggesting:
         self.opt4 = ttk.Entry(
             self.root, font=("Arial", 11), justify="center")
         self.opt4.place(relx=0.5, y=220, anchor="center", width=250)
-        self.category_lbl = ttk.Label(
-            self.root, text="category:", font=("Arial", 9))
-        self.category_lbl.place(relx=0.5, x=3, y=245,
-                                anchor="center")
         self.n = tkinter.StringVar()
         self.subject = ttk.Combobox(
             self.root, state="readonly", textvariable=self.n)
         self.subject['values'] = (
             'programming', 'sport', 'mathematic', 'general', 'geography', 'history')
-        self.subject.place(x=51, relx=0.5, y=270, anchor="center")
-        self.correct_opt_lbl = ttk.Label(
-            self.root, text="correct option:", font=("Arial", 9))
-        self.correct_opt_lbl.place(relx=0.5, x=-88, y=245,
-                                   anchor="center")
+        self.subject.place(x=51, relx=0.5, y=255, anchor="center")
         self.m = tkinter.StringVar()
         self.correct_opt = ttk.Combobox(
             self.root, state="readonly", textvariable=self.m)
         self.correct_opt['values'] = (1, 2, 3, 4)
-        self.correct_opt.place(x=-87, relx=0.5, y=270,
+        self.correct_opt.place(x=-87, relx=0.5, y=255,
                                anchor="center", width=75)
         self.sub_button = ttk.Button(
             self.root, text="submit", command=self.suggest_func)
-        self.sub_button.place(relx=0.5, y=335, anchor="center")
+        self.sub_button.place(relx=0.5, y=350, anchor="center")
         self.sub_lbl = ttk.Label(self.root, font=("Arial", 10))
-        self.sub_lbl.place(relx=0.5, y=300, anchor="center")
-
-        self.cancel_btn = ttk.Button(
-            self.root, text="cancel", command=self.cancel_func)
-        self.cancel_btn.place(relx=0.5, y=380, anchor="center")
+        self.sub_lbl.place(relx=0.5, y=310, anchor="center")
 
     def suggest_func(self):
         for i in [self.m.get(), self.n.get(), self.opt1.get(), self.opt2.get(), self.opt3.get(), self.opt4.get(), self.question_entry.get()]:
@@ -438,19 +311,102 @@ class Suggesting:
                 text="Sent to admin", foreground="green")
             self.root.after(1000, idk)
 
-    def cancel_func(self):
+
+class Subject:
+    def __init__(self, root, user):
+        self.root = root
+        self.user = user
+
+        categories = [
+            ("programming", 50, -80),
+            ("sport", 50, 80),
+            ("mathematic", 100, -80),
+            ("general", 100, 80),
+            ("geography", 150, -80),
+            ("history", 150, 80)
+        ]
+        for text, y, x in categories:
+            btn = ttk.Button(
+                self.root,
+                text=text,
+                command=lambda t=text: self.button_pressed(t))
+            btn.place(relx=0.5, x=x, y=y, anchor="center")
+
+    def button_pressed(self, subject):
         for widget in self.root.winfo_children():
             widget.destroy()
-        MainMenu(self.root, self.user)
+        Game(self.root, subject, self.user)
 
 
-root = tkinter.Tk()
-style = ttk.Style()
-style.configure("TButton", font=("Arial", 14))
+class Login_Signin:
+    def __init__(self, root):
+        self.root = root
+        self.QoNK_lbl = ctk.CTkLabel(
+            self.root, text="Quiz Of NoN Kings!", text_color="gray", font=("Chiller", 35))
+        self.QoNK_lbl.place(relx=0.5, y=50, anchor="center")
+        self.username_lbl = ctk.CTkLabel(
+            self.root, text="username:", font=("Arial", 9))
+        self.username_lbl.place(relx=0.5, x=-93, y=105,
+                                anchor="center")
+        self.username_entry = ctk.CTkEntry(
+            self.root, font=("Arial", 11), justify="center")
+        self.username_entry.place(
+            relx=0.5, y=130, anchor="center")  # width=250
+        self.password_label = ctk.CTkLabel(
+            self.root, text="password:", font=("Arial", 9))
+        self.password_label.place(relx=0.5, x=-93, y=175, anchor="center")
+        self.password_entry = ctk.CTkEntry(
+            self.root, font=("Arial", 11), justify="center")  # show="*"
+        self.password_entry.place(
+            relx=0.5, y=200, anchor="center")  # width=250
+        self.signin_btn = ctk.CTkButton(
+            self.root, text="Sign in", command=self.signin)
+        self.signin_btn.place(relx=0.5, y=270, anchor="center")
+        self.signup_btn = ctk.CTkButton(
+            self.root, text="Sign up", command=self.signup)
+        self.signup_btn.place(relx=0.5, y=330, anchor="center")
+        self.error_lbl = ctk.CTkLabel(self.root, font=("Arial", 10))
+        self.error_lbl.place(relx=0.5, y=370, anchor="center")
+
+    def signin(self):
+        if self.username_entry.get() in uFile:
+            if self.password_entry.get() == uFile[self.username_entry.get()]["password"]:
+                def login():
+                    user = self.username_entry.get()
+                    for widget in self.root.winfo_children():
+                        widget.destroy()
+                    MainMenu(self.root, user)
+                self.error_lbl.config(
+                    text="loged in", foreground="green")
+                self.root.after(1000, login)
+
+            else:
+                self.error_lbl.config(
+                    text="The password is incorrect", foreground="red")
+        else:
+            self.error_lbl.config(
+                text="No such user exists", foreground="red")
+
+    def signup(self):
+        if self.username_entry.get() in uFile:
+            self.error_lbl.config(
+                text="This username is already taken", foreground="red")
+        else:
+
+            uFile.update({self.username_entry.get(): {
+                "password": self.password_entry.get(), "AllTimeScore": 0}})
+            temp2 = open("data/users.json", "w", encoding="utf-8")
+            json.dump(uFile, temp2, ensure_ascii=False, indent=4)
+            temp2.close()
+            self.error_lbl.config(
+                text="Account created, log in", foreground="green")
+
+
+root = ctk.CTk()
+# style = ttk.Style()
+# style.configure("TButton", font=("Arial", 14))
 root.title("QoNK")
 
 root.geometry("410x400+550+250")
 game = Login_Signin(root)
 root.mainloop()
-qFile.close()
-uFile.close()
